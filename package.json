@@ -1,13 +1,13 @@
 {
-  "name": "hello-world-vercel",
+  "name": "interactive-game",
   "version": "1.0.0",
-  "description": "Hello World for Vercel Node.js",
-  "main": "api/hello.js",
+  "description": "Interactive Number Guessing Game",
+  "main": "api/index.js",
   "scripts": {
     "dev": "vercel dev",
-    "start": "node api/hello.js"
+    "start": "node api/index.js"
   },
-  "keywords": ["vercel", "node.js"],
+  "keywords": ["game", "interactive", "vercel", "node.js"],
   "author": "",
   "license": "MIT"
 }
