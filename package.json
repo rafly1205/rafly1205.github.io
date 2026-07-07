@@ -1,0 +1,13 @@
+{
+  "name": "hello-world-vercel",
+  "version": "1.0.0",
+  "description": "Hello World for Vercel Node.js",
+  "main": "api/hello.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node api/hello.js"
+  },
+  "keywords": ["vercel", "node.js"],
+  "author": "",
+  "license": "MIT"
+}
