@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .game-section {
+            display: none;
+        }
+
+        .game-section.active {
+            display: block;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-full {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status.neutral {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .status.higher {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.lower {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .guesses {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .guesses-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .guesses-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .guess-item {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .attempts {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .attempts strong {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .modal {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal h2 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>?? Guess the Number</h1>
+        <p class="subtitle">Guess a number between 1 and 100</p>
+
+        <!-- Start Section -->
+        <div id="startSection" class="game-section active">
+            <button class="button-full" onclick="startGame()">Start New Game</button>
+            <p style="text-align: center; color: #999; margin-top: 20px; font-size: 14px;">
+                Click to begin your game!
+            </p>
+        </div>
+
+        <!-- Game Section -->
+        <div id="gameSection" class="game-section">
+            <div id="statusMessage" class="status neutral">Make your first guess!</div>
+
+            <div class="input-group">
+                <input 
+                    type="number" 
+                    id="guessInput" 
+                    min="1" 
+                    max="100" 
+                    placeholder="Enter your guess..."
+                    onkeypress="if(event.key===''Enter'') makeGuess()"
+                >
+                <button onclick="makeGuess()">Guess</button>
+            </div>
+
+            <div id="guessesContainer" class="guesses" style="display: none;">
+                <div class="guesses-title">Your Guesses:</div>
+                <div id="guessesList" class="guesses-list"></div>
+            </div>
+
+            <div id="attemptsContainer" class="attempts" style="display: none;">
+                Attempts: <strong id="attemptCount">0</strong>
+            </div>
+
+            <button class="button-full" style="margin-top: 20px;" onclick="newGame()">New Game</button>
+        </div>
+
+        <!-- Win Modal -->
+        <div id="winModal" class="modal">
+            <h2>?? You Won!</h2>
+            <p id="winMessage"></p>
+            <button class="button-full" style="margin-top: 15px;" onclick="newGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let currentGameId = null;
+
+        async function startGame() {
+            try {
+                const response = await fetch('/api/index.js?action=new');
+                const data = await response.json();
+
+                if (data.success) {
+                    currentGameId = data.gameId;
+                    document.getElementById('startSection').classList.remove('active');
+                    document.getElementById('gameSection').classList.add('active');
+                    document.getElementById('winModal').classList.remove('show');
+                    document.getElementById('guessInput').focus();
+                }
+            } catch (error) {
+                alert('Error starting game: ' + error.message);
+            }
+        }
+
+        async function makeGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const guess = guessInput.value.trim();
+
+            if (!guess) {
+                alert('Please enter a number!');
+                return;
+            }
+
+            if (!currentGameId) {
+                alert('No active game. Start a new game!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/index.js?action=guess&gameId=${currentGameId}&guess=${guess}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    guessInput.value = '';
+
+                    if (data.won) {
+                        document.getElementById('winMessage').textContent = data.message;
+                        document.getElementById('winModal').classList.add('show');
+                        document.getElementById('gameSection').classList.remove('active');
+                    } else {
+                        const statusEl = document.getElementById('statusMessage');
+                        statusEl.textContent = data.message;
+                        statusEl.className = 'status ' + data.hint;
+
+                        document.getElementById('attemptCount').textContent = data.attempts;
+                        document.getElementById('attemptsContainer').style.display = 'block';
+
+                        const guessesList = document.getElementById('guessesList');
+                        guessesList.innerHTML = data.guesses.map(g => `<div class="guess-item">${g}</div>`).join('');
+                        document.getElementById('guessesContainer').style.display = 'block';
+                    }
+
+                    guessInput.focus();
+                }
+            } catch (error) {
+                alert('Error making guess: ' + error.message);
+            }
+        }
+
+        function newGame() {
+            document.getElementById('gameSection').classList.remove('active');
+            document.getElementById('startSection').classList.add('active');
+            document.getElementById('winModal').classList.remove('show');
+            document.getElementById('guessesList').innerHTML = '';
+            document.getElementById('attemptsContainer').style.display = 'none';
+            document.getElementById('guessesContainer').style.display = 'none';
+            currentGameId = null;
+        }
+    </script>
+</body>
+</html>
